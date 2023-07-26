@@ -50,19 +50,19 @@ spec:
             value: prometheus
           - name: PORT
             value: "9090"
-          readinessProbe:
-            httpGet:
-              path: "/-/ready"
-              port: 3000
-            initialDelaySeconds: 30
-            timeoutSeconds: 30
-          livenessProbe:
-            httpGet:
-              path: "/-/healthy"
-              port: 3000
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: "/-/ready"
+            port: 3000
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: "/-/healthy"
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
       terminationGracePeriodSeconds: 300
   strategy:
     type: RollingUpdate
