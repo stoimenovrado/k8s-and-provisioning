@@ -43,9 +43,9 @@ spec:
             subPath: datasource.yml
         env:
           - name: GF_SECURITY_ADMIN_USER
-            value: radoslv
+            value: admin
           - name: GF_SECURITY_ADMIN_PASSWORD
-            value: Parolka1
+            value: admin
           - name: HOST
             value: prometheus
           - name: PORT
