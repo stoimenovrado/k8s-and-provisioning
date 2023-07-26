@@ -15,7 +15,6 @@ spec:
       labels:
         app: prometheus
     spec:
-      serviceAccountName: prometheus
       volumes:
         - name: config-volume
           emptyDir: {} # Shared volume to be used by the initContainer and prometheus-server container
@@ -27,22 +26,6 @@ spec:
             - name: config-volume
               mountPath: "/config"
       containers:
-        # - name: prometheus-server-configmap-reload
-        #   image: jimmidyson/configmap-reload
-        #   args:
-        #     - "--volume-dir=/etc/config"
-        #     - "--webhook-url=http://localhost:9090/-/reload"
-        #   volumeMounts:
-        #     - name: config-volume
-        #       mountPath: "/etc/config"
-        #       readOnly: true
-        #   resources:
-        #     limits:
-        #       cpu: "10m"
-        #       memory: "10Mi"
-        #     requests:
-        #       cpu: "10m"
-        #       memory: "10Mi"
         - name: prometheus
           image: prom/prometheus
           args:
@@ -55,7 +38,8 @@ spec:
             - containerPort: 9090
           volumeMounts:
             - name: config-volume
-              mountPath: "/etc/prometheus"
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
             - name: prometheus-data
               mountPath: "/data"
           readinessProbe:
@@ -78,7 +62,6 @@ spec:
             requests:
               cpu: "200m"
               memory: "750Mi"
-          volumeMounts:
       terminationGracePeriodSeconds: 300
   strategy:
     type: RollingUpdate
