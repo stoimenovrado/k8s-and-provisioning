@@ -40,8 +40,6 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/prometheus.yml
               subPath: prometheus.yml
-            - name: prometheus-data
-              mountPath: "/data"
           readinessProbe:
             httpGet:
               path: "/-/ready"
