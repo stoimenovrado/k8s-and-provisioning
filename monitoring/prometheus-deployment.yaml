@@ -6,7 +6,7 @@ metadata:
   labels:
     app: prometheus
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: prometheus
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: stoimenovrado/bgapp-db
+          image: prom/prometheus
           resources:
             requests:
               memory: 512Mi
