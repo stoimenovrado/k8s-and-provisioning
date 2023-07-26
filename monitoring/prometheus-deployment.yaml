@@ -43,7 +43,7 @@ spec:
         #     requests:
         #       cpu: "10m"
         #       memory: "10Mi"
-        - name: prometheus-server
+        - name: prometheus
           image: prom/prometheus
           args:
             - "--config.file=/etc/prometheus/prometheus.yaml"
