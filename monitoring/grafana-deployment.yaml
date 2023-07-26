@@ -42,10 +42,10 @@ spec:
             mountPath: /etc/grafana/provisioning/datasources/datasource.yml
             subPath: datasource.yml
         env:
-          - name: GF_SECURITY_ADMIN_USER
-            value: admin
-          - name: GF_SECURITY_ADMIN_PASSWORD
-            value: admin
+          # - name: GF_SECURITY_ADMIN_USER
+          #   value: admin
+          # - name: GF_SECURITY_ADMIN_PASSWORD
+          #   value: admin
           - name: HOST
             value: prometheus
           - name: PORT
