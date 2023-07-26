@@ -9,20 +9,20 @@ scrape_configs:
 
   - job_name: 'Web-VM1'
     static_configs:
-      - targets: ['bgapp-web-vm-1.bgapp.test:9100']
+      - targets: ['web-1.bgapp.test:9100']
 
   - job_name: 'Web-VM2'
     static_configs:
-      - targets: ['bgapp-web-vm-2.bgapp.test:9100']
+      - targets: ['web-2.bgapp.test:9100']
       
   - job_name: 'Web-VM3'
     static_configs:
-      - targets: ['bgapp-web-vm-3.bgapp.test:9100']
+      - targets: ['web-3.bgapp.test:9100']
       
   - job_name: 'DB-VM'
     static_configs:
-      - targets: ['bgapp-db-vm.bgapp.test:9100']
+      - targets: ['db.bgapp.test:9100']
       
-  - job_name: 'JH-VM'
-    static_configs:
-      - targets: ['bgapp-jh-vm.bgapp.test:9100']
+  # - job_name: 'JH-VM'
+  #   static_configs:
+  #     - targets: ['bgapp-jh-vm.bgapp.test:9100']
