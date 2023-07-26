@@ -15,6 +15,16 @@ spec:
       labels:
         app: grafana
     spec:
+      volumes:
+        - name: grafana-datasource-config
+          emptyDir: {} # Shared volume to be used by the initContainer and Grafana container
+      initContainers:
+        - name: init-download-datasource-config
+          image: busybox:latest
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/config/datasource.yml"]
+          volumeMounts:
+            - name: grafana-datasource-config
+              mountPath: /config
       containers:
       - name: grafana
         image: grafana/grafana
@@ -27,20 +37,35 @@ spec:
             cpu: "950m"
         ports:
           - containerPort: 3000
+        volumeMounts:
+          - name: grafana-datasource-config
+            mountPath: /etc/grafana/provisioning/datasources/datasource.yml
+            subPath: datasource.yml
         env:
+          - name: GF_SECURITY_ADMIN_USER
+            value: radoslv
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            value: Parolka1
           - name: HOST
             value: prometheus
           - name: PORT
             value: "9090"
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
+          readinessProbe:
+            httpGet:
+              path: "/-/ready"
+              port: 3000
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: "/-/healthy"
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+      terminationGracePeriodSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
