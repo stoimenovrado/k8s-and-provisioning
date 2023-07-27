@@ -38,7 +38,7 @@ spec:
               mountPath: /etc/prometheus/prometheus.yml
               subPath: prometheus.yml
             - name: prometheus-pvc
-              mountPath: /mnt/azure
+              mountPath: /prometheus
           readinessProbe:
             httpGet:
               path: "/-/ready"
