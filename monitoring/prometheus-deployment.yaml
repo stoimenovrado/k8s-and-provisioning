@@ -6,7 +6,7 @@ metadata:
   labels:
     app: prometheus
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: prometheus
@@ -22,12 +22,18 @@ spec:
           persistentVolumeClaim:
             claimName: prometheus-pvc
       initContainers:
-        - name: init-chown-data
+        - name: get-config-data
           image: busybox:latest
           command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/config/prometheus.yml"]
           volumeMounts:
             - name: config-volume
               mountPath: "/config"
+        - name: init-chown-data
+          image: busybox:latest
+          command: ["chown", "-R", "65534:65534", "/data"]
+          volumeMounts:
+            - name: prometheus-pvc
+              mountPath: "/data"
       containers:
         - name: prometheus
           image: prom/prometheus
@@ -37,10 +43,9 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-pvc
-              mountPath: /data
-          command: ["chown", "-R", "65534:65534", "/data"]
+              mountPath: /prometheus
           args:
-            # - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/data"
           readinessProbe:
             httpGet:
