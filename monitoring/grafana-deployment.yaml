@@ -24,7 +24,7 @@ spec:
           image: busybox:latest
           command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/grafana-config/datasource.yml"]
           volumeMounts:
-            - name: grafana-datasource-config
+            - name: init-grafana-datasource-config
               mountPath: /etc/grafana/provisioning/datasources
       containers:
       - name: grafana
@@ -41,6 +41,9 @@ spec:
         volumeMounts:
           - name: grafana-datasource-config
             mountPath: "/mnt/azure"
+          - name: init-grafana-datasource-config
+            mountPath: /etc/grafana/provisioning/datasources
+            subPath: datasource.yml
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
