@@ -40,7 +40,7 @@ spec:
           - containerPort: 3000
         volumeMounts:
           - name: grafana-datasource-config
-            mountPath: "/mnt/azure"
+            mountPath: "/etc/grafana/"
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
@@ -63,7 +63,7 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 30
-        command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/etc/grafana/provisioning/datasources/datasource.yml"]
+        #command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/etc/grafana/provisioning/datasources/datasource.yml"]
       terminationGracePeriodSeconds: 300
   strategy:
     type: RollingUpdate
