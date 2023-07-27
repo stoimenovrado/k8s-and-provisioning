@@ -19,6 +19,13 @@ spec:
         - name: grafana-datasource-config
           persistentVolumeClaim:
             claimName: grafana-pvc
+      initContainers:
+        - name: init-download-datasource-config
+          image: busybox:latest
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/grafana-config/datasource.yml"]
+          volumeMounts:
+            - name: grafana-datasource-config
+              mountPath: /etc/grafana/provisioning/datasources
       containers:
       - name: grafana
         image: grafana/grafana
@@ -56,12 +63,6 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 30
-        command:
-          - "/bin/sh"
-          - "-c"
-          - |
-            wget -O /etc/grafana/provisioning/datasources/datasource-graf.yaml https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml && \
-            mv /etc/grafana/provisioning/datasources/datasource-graf.yaml /etc/grafana/provisioning/datasources/datasource.yml
       terminationGracePeriodSeconds: 300
   strategy:
     type: RollingUpdate
