@@ -28,6 +28,12 @@ spec:
           volumeMounts:
             - name: grafana-datasource-config
               mountPath: /config
+        - name: init-chown-data
+          image: busybox:latest
+          command: ["chown", "-R", "/var/lib/grafana"]
+          volumeMounts:
+            - name: grafana-pvc
+              mountPath: "/var/lib/grafana"
       containers:
       - name: grafana
         image: grafana/grafana
