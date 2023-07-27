@@ -6,7 +6,7 @@ metadata:
   labels:
     app: grafana
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: grafana
@@ -30,10 +30,10 @@ spec:
               mountPath: /config
         - name: init-chown-data
           image: busybox:latest
-          command: ["chown", "-R", "/var/lib/grafana"]
+          command: ["chown", "-R", "472:472", "/var/lib/grafana"]
           volumeMounts:
             - name: grafana-pvc
-              mountPath: "/"
+              mountPath: "/var/lib/grafana"
       containers:
       - name: grafana
         image: grafana/grafana
