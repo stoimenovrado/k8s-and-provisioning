@@ -16,6 +16,8 @@ spec:
         app: grafana
     spec:
       volumes:
+        - name: init-grafana-datasource-config
+          emptyDir: {}
         - name: grafana-datasource-config
           persistentVolumeClaim:
             claimName: grafana-pvc
