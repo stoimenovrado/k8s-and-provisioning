@@ -9,5 +9,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 2000Mi
+    limits:
+      storage: 2500Mi
   storageClassName: "azure-disk-storage"
