@@ -24,17 +24,10 @@ spec:
       initContainers:
         - name: init-chown-data
           image: busybox:latest
-          command:
-            - "/bin/sh"
-            - "-c"
-            - >
-              wget -O /config/prometheus.yml https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml
-              && chown -R nobody:nogroup /mnt/azure/prometheus
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/config/prometheus.yml"]
           volumeMounts:
             - name: config-volume
               mountPath: "/config"
-            - name: prometheus-pvc
-              mountPath: /mnt/azure/prometheus
       containers:
         - name: prometheus
           image: prom/prometheus
@@ -44,10 +37,10 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-pvc
-              mountPath: /mnt/azure/prometheus
+              mountPath: /mnt/azure
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/mnt/azure/prometheus"
+            - "--storage.tsdb.path=/mnt/azure"
           readinessProbe:
             httpGet:
               path: "/-/ready"
