@@ -35,7 +35,7 @@ spec:
             - containerPort: 9090
           volumeMounts:
             - name: config-volume
-              mountPath: /etc/prometheus/prometheus.yml
+              mountPath: /etc/prometheus/
             - name: prometheus-pvc
               mountPath: /prometheus
           readinessProbe:
