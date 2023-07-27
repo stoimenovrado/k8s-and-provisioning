@@ -37,10 +37,10 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-pvc
-              mountPath: /mnt/azure
-          args:
-            - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/mnt/azure"
+              mountPath: /prometheus
+          # args:
+          #   - "--config.file=/etc/prometheus/prometheus.yml"
+          #   - "--storage.tsdb.path=/mnt/azure"
           readinessProbe:
             httpGet:
               path: "/-/ready"
