@@ -56,13 +56,12 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 30
-        command: ["/bin/sh", "-c"]
-        args:
-        - |
-          wget -O /etc/grafana/provisioning/datasources/datasource.yml https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml
-          if [ $? -ne 0 ]; then
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            wget -O /etc/grafana/provisioning/datasources/datasource-graf.yaml https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml && \
             mv /etc/grafana/provisioning/datasources/datasource-graf.yaml /etc/grafana/provisioning/datasources/datasource.yml
-          fi
       terminationGracePeriodSeconds: 300
   strategy:
     type: RollingUpdate
