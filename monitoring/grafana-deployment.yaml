@@ -6,7 +6,7 @@ metadata:
   labels:
     app: grafana
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: grafana
@@ -34,10 +34,10 @@ spec:
         resources:
           requests:
             memory: "750Mi"
-            cpu: "500m"
+            cpu: "250m"
           limits:
             memory: "1024Mi"
-            cpu: "950m"
+            cpu: "450m"
         ports:
           - containerPort: 3000
         volumeMounts:
