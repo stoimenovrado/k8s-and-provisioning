@@ -40,8 +40,7 @@ spec:
           - containerPort: 3000
         volumeMounts:
           - name: grafana-datasource-config
-            mountPath: /etc/grafana/provisioning/datasources/datasource.yml
-            subPath: datasource.yml
+            mountPath: /etc/grafana/
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
