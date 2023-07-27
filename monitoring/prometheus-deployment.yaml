@@ -25,7 +25,7 @@ spec:
           command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/prometheus-config/prometheus.yml"]
           volumeMounts:
             - name: prometheus-config
-              mountPath: "/prometheus-config"
+              mountPath: "/etc/prometheus"
       containers:
         - name: prometheus
           image: prom/prometheus
