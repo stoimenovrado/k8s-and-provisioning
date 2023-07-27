@@ -24,10 +24,17 @@ spec:
       initContainers:
         - name: init-chown-data
           image: busybox:latest
-          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/config/prometheus.yml"]
+          command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              wget -O /config/prometheus.yml https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml
+              && chown -R nobody:nogroup /mnt/azure/prometheus
           volumeMounts:
             - name: config-volume
               mountPath: "/config"
+            - name: prometheus-pvc
+              mountPath: /mnt/azure/prometheus
       containers:
         - name: prometheus
           image: prom/prometheus
