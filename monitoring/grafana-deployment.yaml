@@ -6,7 +6,7 @@ metadata:
   labels:
     app: grafana
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: grafana
@@ -16,36 +16,36 @@ spec:
         app: grafana
     spec:
       volumes:
-        - name: init-grafana-datasource-config
-          emptyDir: {}
         - name: grafana-datasource-config
+          emptyDir: {} # Shared volume to be used by the initContainer and Grafana container
+        - name: grafana-pvc
           persistentVolumeClaim:
             claimName: grafana-pvc
       initContainers:
         - name: init-download-datasource-config
           image: busybox:latest
-          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/grafana-config/datasource.yml"]
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/config/datasource.yml"]
           volumeMounts:
-            - name: init-grafana-datasource-config
-              mountPath: /etc/grafana/provisioning/datasources
+            - name: grafana-datasource-config
+              mountPath: /config
       containers:
       - name: grafana
         image: grafana/grafana
         resources:
           requests:
             memory: "750Mi"
-            cpu: "250m"
+            cpu: "500m"
           limits:
             memory: "1024Mi"
-            cpu: "450m"
+            cpu: "950m"
         ports:
           - containerPort: 3000
         volumeMounts:
           - name: grafana-datasource-config
-            mountPath: "/mnt/azure"
-          - name: init-grafana-datasource-config
-            mountPath: /etc/grafana/provisioning/datasources
+            mountPath: /etc/grafana/provisioning/datasources/datasource.yml
             subPath: datasource.yml
+          - name: grafana-pvc
+            mountPath: /mnt/azure
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
