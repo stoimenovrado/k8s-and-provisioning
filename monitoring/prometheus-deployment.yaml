@@ -16,24 +16,29 @@ spec:
         app: prometheus
     spec:
       volumes:
+        - name: config-volume
+          emptyDir: {} # Shared volume to be used by the initContainer and prometheus-server container
         - name: prometheus-config
           persistentVolumeClaim:
             claimName: prometheus-pvc
       initContainers:
         - name: init-chown-data
           image: busybox:latest
-          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/etc/prometheus/prometheus.yml"]
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/config/prometheus.yml"]
           volumeMounts:
-            - name: prometheus-config
-              mountPath: "/etc/prometheus"
+            - name: config-volume
+              mountPath: "/config"
       containers:
         - name: prometheus
           image: prom/prometheus
           ports:
             - containerPort: 9090
           volumeMounts:
-            - name: prometheus-config
-              mountPath: /etc/prometheus/
+            - name: config-volume
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+            - name: prometheus-pvc
+              mountPath: /mnt/azure
           readinessProbe:
             httpGet:
               path: "/-/ready"
@@ -49,7 +54,7 @@ spec:
             timeoutSeconds: 30
           resources:
             limits:
-              cpu: "450m"
+              cpu: "500m"
               memory: "1000Mi"
             requests:
               cpu: "200m"
