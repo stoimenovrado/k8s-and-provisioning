@@ -6,7 +6,7 @@ metadata:
   labels:
     app: prometheus
 spec:
-  replicas: 0
+  replicas: 2
   selector:
     matchLabels:
       app: prometheus
@@ -59,8 +59,8 @@ spec:
               cpu: "200m"
               memory: "750Mi"
       terminationGracePeriodSeconds: 300
-  # strategy:
-  #   type: RollingUpdate
-  #   rollingUpdate:
-  #     maxUnavailable: 1
-  #     maxSurge: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
