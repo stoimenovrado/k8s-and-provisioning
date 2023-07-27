@@ -22,7 +22,7 @@ spec:
       initContainers:
         - name: init-chown-data
           image: busybox:latest
-          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/prometheus-config/prometheus.yml"]
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/prometheus-conf.yaml", "-O", "/etc/prometheus/prometheus.yml"]
           volumeMounts:
             - name: prometheus-config
               mountPath: "/etc/prometheus"
