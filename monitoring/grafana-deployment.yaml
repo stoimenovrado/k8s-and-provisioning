@@ -45,7 +45,7 @@ spec:
             mountPath: /etc/grafana/provisioning/datasources/datasource.yml
             subPath: datasource.yml
           - name: grafana-pvc
-            mountPath: /mnt/azure
+            mountPath: /var/lib/grafana
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
