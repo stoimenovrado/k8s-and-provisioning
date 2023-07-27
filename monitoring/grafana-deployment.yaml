@@ -33,7 +33,7 @@ spec:
           command: ["chown", "-R", "/var/lib/grafana"]
           volumeMounts:
             - name: grafana-pvc
-              mountPath: "/var/lib/grafana"
+              mountPath: "/"
       containers:
       - name: grafana
         image: grafana/grafana
