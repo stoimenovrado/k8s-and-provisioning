@@ -9,7 +9,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2000Mi
-    limits:
-      storage: 2500Mi
-  storageClassName: managed-csi
+      storage: 5000Mi
+  storageClassName: prom-storage
