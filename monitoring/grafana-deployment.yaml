@@ -40,7 +40,7 @@ spec:
           - containerPort: 3000
         volumeMounts:
           - name: grafana-datasource-config
-            mountPath: "/etc/grafana/"
+            mountPath: "/mnt/azure"
         env:
           - name: GF_SECURITY_ADMIN_USER
             value: radoslv
