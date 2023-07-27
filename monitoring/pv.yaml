@@ -9,3 +9,10 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: "azure-disk-storage" # Replace with your desired storage class name
+  azureDisk:
+    cachingMode: None # Can be None, ReadOnly, or ReadWrite
+    diskName: monitoring-disk
+    diskURI: # Replace with the URI of your existing Azure Disk, or leave empty to have it dynamically provisioned
+    kind: Managed
+    fsType: ext4
