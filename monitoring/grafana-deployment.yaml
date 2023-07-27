@@ -69,8 +69,8 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 30
       terminationGracePeriodSeconds: 300
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
+  # strategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxUnavailable: 1
+  #     maxSurge: 1
