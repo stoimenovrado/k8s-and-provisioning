@@ -18,7 +18,7 @@ spec:
       volumes:
         - name: config-volume
           emptyDir: {} # Shared volume to be used by the initContainer and prometheus-server container
-        - name: prometheus-config
+        - name: prometheus-pvc
           persistentVolumeClaim:
             claimName: prometheus-pvc
       initContainers:
