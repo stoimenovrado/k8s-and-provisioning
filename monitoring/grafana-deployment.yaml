@@ -17,14 +17,15 @@ spec:
     spec:
       volumes:
         - name: grafana-datasource-config
-          emptyDir: {} # Shared volume to be used by the initContainer and Grafana container
+          persistentVolumeClaim:
+            claimName: grafana-pvc
       initContainers:
         - name: init-download-datasource-config
           image: busybox:latest
-          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/config/datasource.yml"]
+          command: ["wget", "https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/monitoring/datasource-graf.yaml", "-O", "/etc/grafana/provisioning/datasources/datasource.yml"]
           volumeMounts:
             - name: grafana-datasource-config
-              mountPath: /config
+              mountPath: /etc/grafana/provisioning/datasources
       containers:
       - name: grafana
         image: grafana/grafana
