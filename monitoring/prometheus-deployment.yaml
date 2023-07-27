@@ -36,7 +36,6 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/prometheus.yml
-              subPath: prometheus.yml
             - name: prometheus-pvc
               mountPath: /prometheus
           readinessProbe:
