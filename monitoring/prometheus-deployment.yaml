@@ -37,7 +37,7 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-pvc
-              mountPath: /prometheus
+              mountPath: /mnt/azure/prometheus
           readinessProbe:
             httpGet:
               path: "/-/ready"
