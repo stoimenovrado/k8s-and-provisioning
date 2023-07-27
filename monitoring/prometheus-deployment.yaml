@@ -40,7 +40,7 @@ spec:
               mountPath: /data
           command: ["chown", "-R", "65534:65534", "/data"]
           args:
-            - "--config.file=/etc/prometheus/prometheus.yml"
+            # - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/data"
           readinessProbe:
             httpGet:
