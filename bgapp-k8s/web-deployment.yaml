@@ -4,7 +4,7 @@ metadata:
   name: bgapp-web-deployment
   namespace: bgapp
   labels:
-    app: bgapp
+    app: bgapp-web
 spec:
   replicas: 2
   selector:
