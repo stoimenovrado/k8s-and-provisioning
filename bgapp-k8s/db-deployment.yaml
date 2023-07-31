@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bgappdb-deployment
+  name: bgapp-db-deployment
   namespace: bgapp
   labels:
-    app: db
+    app: bgapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db
+      app: bgapp
   template:
     metadata:
       labels:
-        app: db
+        app: bgapp-db
     spec:
       containers:
-        - name: db
+        - name: bgapp-db
           image: stoimenovrado/bgapp-db
           resources:
             requests:
