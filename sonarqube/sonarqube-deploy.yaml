@@ -6,7 +6,7 @@ metadata:
   labels:
     app: sonarqube
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sonarqube
@@ -20,10 +20,10 @@ spec:
         image: sonarqube:latest
         resources:
           requests:
-            memory: "256Mi"
+            memory: "1024Mi"
             cpu: "500m"
           limits:
-            memory: "512Mi"
+            memory: "1536Mi"
             cpu: "750m"
         ports:
           - containerPort: 9000
