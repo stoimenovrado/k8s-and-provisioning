@@ -15,15 +15,35 @@ spec:
       labels:
         app: sonarqube
     spec:
+      volumes:
+        - name: sonarqube-data
+          persistentVolumeClaim:
+            claimName: sonarqube-data-pvc
+        - name: sonarqube-conf
+          persistentVolumeClaim:
+            claimName: sonarqube-conf-pvc
+        - name: sonarqube-logs
+          persistentVolumeClaim:
+            claimName: sonarqube-logs-pvc
       containers:
       - name: sonarqube
         image: sonarqube:latest
+        securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+        volumeMounts:
+            - name: sonarqube-data
+              mountPath: /opt/sonarqube/data
+            - name: sonarqube-conf
+              mountPath: /opt/sonarqube/conf
+            - name: sonarqube-logs
+              mountPath: /opt/sonarqube/logs
         resources:
           requests:
             memory: "1536Mi"
             cpu: "750m"
           limits:
-            memory: "2048Mi"
-            cpu: "950m"
+            memory: "2560Mi"
+            cpu: "999m"
         ports:
           - containerPort: 9000
