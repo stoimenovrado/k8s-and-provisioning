@@ -25,12 +25,20 @@ spec:
         - name: sonarqube-logs
           persistentVolumeClaim:
             claimName: sonarqube-logs-pvc
+        initContainers:
+        - name: init-permissions
+          image: busybox:latest
+          command: ["sh", "-c", "chmod -R 755 /opt/sonarqube"]
+          volumeMounts:
+            - name: sonarqube-data
+              mountPath: /opt/sonarqube/data
+            - name: sonarqube-conf
+              mountPath: /opt/sonarqube/conf
+            - name: sonarqube-logs
+              mountPath: /opt/sonarqube/logs
       containers:
       - name: sonarqube
         image: sonarqube:latest
-        securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
         volumeMounts:
             - name: sonarqube-data
               mountPath: /opt/sonarqube/data
