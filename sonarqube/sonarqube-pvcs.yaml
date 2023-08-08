@@ -9,7 +9,7 @@ spec:
   resources:
     requests:
       storage: 5000Mi
-  storageClassName: sonarqube-storage
+  storageClassName: sonarqube-data-storage
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -22,7 +22,7 @@ spec:
   resources:
     requests:
       storage: 5000Mi
-  storageClassName: sonarqube-storage
+  storageClassName: sonarqube-conf-storage
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -35,4 +35,4 @@ spec:
   resources:
     requests:
       storage: 5000Mi
-  storageClassName: sonarqube-storage
+  storageClassName: sonarqube-logs-storage
