@@ -28,7 +28,7 @@ spec:
         initContainers:
         - name: init-permissions
           image: busybox:latest
-          command: ["sh", "-c", "chmod -R 755 /opt/sonarqube"]
+          command: ["sh", "-c", "chown -R 1000:1000 /opt/sonarqube/data /opt/sonarqube/conf /opt/sonarqube/logs"]
           volumeMounts:
             - name: sonarqube-data
               mountPath: /opt/sonarqube/data
@@ -39,6 +39,9 @@ spec:
       containers:
       - name: sonarqube
         image: sonarqube:latest
+        securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
         volumeMounts:
             - name: sonarqube-data
               mountPath: /opt/sonarqube/data
