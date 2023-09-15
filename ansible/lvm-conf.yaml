@@ -1,0 +1,139 @@
+- hosts: localhost
+  vars:
+    parasoft_dtp_backup_directory: /mnt/backup
+    parasoft_dtp_directory: /opt/dtp
+    parasoft_dtp_dump_directory: "{{ parasoft_dtp_backup_directory }}/database"
+    parasoft_dtp_heap_dump_directory: /mnt/heap-dumps
+    parasoft_dtp_lvm_dtp_lv_name: dtp-lv
+    parasoft_dtp_lvm_dtp_lv_size: "50%VG"
+    parasoft_dtp_lvm_dump_lv_name: dump-lv
+    parasoft_dtp_lvm_heap_dump_lv_name: heap-dump-lv
+    parasoft_dtp_lvm_dump_lv_size: "25%VG"
+    parasoft_dtp_lvm_heap_dump_lv_size: "5%VG"
+    parasoft_dtp_lvm_snapshot_mountpoint: "{{ parasoft_dtp_backup_directory }}/snapshot"
+    parasoft_dtp_lvm_snapshot_name: dtp-snap
+    parasoft_dtp_lvm_vg_name: data-vg
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - parted # required for later provisioning
+          - lvm2 # required for later provisioning
+        state: present
+
+    - name: Get partition info
+      parted:
+        device: /dev/sdc
+        unit: GiB
+      changed_when: False
+      register: parted_info_sdc
+
+    - debug:
+        var: parted_info_sdc
+        verbosity: 1
+
+    - name: Make sure the machine is stopped / started on volume resize
+      fail:
+        msg: "Reported size of disk in machine differs from in inventory. Do you need to shutdown / start the machine? A reboot is not enough!"
+      when: parted_info_sdc.disk.size | int != parasoft_dtp_volume_size | int
+
+    - name: Make sure we don't destroy data accidentally
+      fail:
+        msg: "Partition table contains partition with file system instead of expected empty table or lvm partition. Please take care of the volume!"
+      when:
+        - parted_info_sdc.partitions[0].fstype is defined
+        - parted_info_sdc.partitions[0].fstype == "ext4"
+
+    - name: Create partition table
+      parted:
+        device: /dev/sdc
+        number: 1
+        flags:
+          - lvm
+        state: present
+        # added in 1.3.0 of community.general
+        #resize: true
+
+    - name: Workaround parted resize
+      command: growpart /dev/sdc 1
+      register: growpart_sdc
+      changed_when:
+        - '"CHANGED" in growpart_sdc.stdout'
+      failed_when:
+        - growpart_sdc.rc != 0
+        - '"NOCHANGE" not in growpart_sdc.stdout'
+
+    - name: Workaround lvg resize
+      command: pvresize /dev/sdc1
+      register: pvresize_sdc1
+      when:
+        # Not sure if we could simply use growpart_sdc.changed
+        - '"CHANGED" in growpart_sdc.stdout'
+
+    - name: Create volume group
+      lvg:
+        vg: "data-vg"
+        pvs: /dev/sdc1
+        pesize: "64"
+        state: present
+        # added in 0.2.0 of community.general
+        #pvresize: yes
+    - name: Create dtp volume
+      lvol:
+        vg: "{{ parasoft_dtp_lvm_vg_name }}"
+        lv: "{{ item.name }}"
+        size: "{{ item.size }}"
+        resizefs: yes
+        state: present
+      with_items:
+        - { name: "{{ parasoft_dtp_lvm_dtp_lv_name }}", size: "{{ parasoft_dtp_lvm_dtp_lv_size }}" }
+        # We need this to prevent writing the dump to the snapshotted fs, which might blow up the space
+        - { name: "{{ parasoft_dtp_lvm_dump_lv_name }}", size: "{{ parasoft_dtp_lvm_dump_lv_size }}" }
+        - { name: "{{ parasoft_dtp_lvm_heap_dump_lv_name }}", size: "{{ parasoft_dtp_lvm_heap_dump_lv_size }}" }
+
+    - name: Create mount point folder
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ parasoft_dtp_directory }}"
+        - "{{ parasoft_dtp_dump_directory }}"
+        - "{{ parasoft_dtp_lvm_snapshot_mountpoint }}"
+        - "{{ parasoft_dtp_heap_dump_directory }}" # new heap dump mount point
+
+    - name: Create file system
+      filesystem:
+        device: "/dev/{{ parasoft_dtp_lvm_vg_name }}/{{ item }}"
+        fstype: ext4
+        force: no
+        # This should be covered by the lvol invocation
+        #resizefs: yes
+      with_items:
+        - "{{ parasoft_dtp_lvm_dtp_lv_name }}"
+        - "{{ parasoft_dtp_lvm_dump_lv_name }}"
+        - "{{ parasoft_dtp_lvm_heap_dump_lv_name }}"
+
+    - name: Mount file system and configure fstab
+      mount:
+        fstype: ext4
+        opts: noatime
+        path: "{{ item.mp }}"
+        src: "/dev/{{ parasoft_dtp_lvm_vg_name }}/{{ item.lv }}"
+        state: mounted
+      with_items:
+        - { lv: "{{ parasoft_dtp_lvm_dtp_lv_name }}", mp: "{{ parasoft_dtp_directory }}" }
+        - { lv: "{{ parasoft_dtp_lvm_dump_lv_name }}", mp: "{{ parasoft_dtp_dump_directory }}" }
+        - { lv: "{{ parasoft_dtp_lvm_heap_dump_lv_name }}", mp: "{{ parasoft_dtp_heap_dump_directory }}"}
+
+    # - name: Provide scripts
+    #   template:
+    #     src: "{{ item }}.j2"
+    #     dest: "/usr/local/sbin/{{ item }}"
+    #     owner: root
+    #     group: root
+    #     mode: 0750
+    #     validate: "/bin/bash -n %s"
+    #   with_items:
+    #     - prepare-dtp-snapshot.sh
+    #     - remove-dtp-snapshot.sh
