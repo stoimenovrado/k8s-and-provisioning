@@ -16,4 +16,4 @@ echo "* Apply LVM Conf playbook ..."
 mkdir /home/radoslv/ansible
 cd /home/radoslv/ansible
 wget https://raw.githubusercontent.com/stoimenovrado/k8s-and-provisioning/main/ansible/lvm-conf.yaml
-sudo ansible-playbook lvm-conf.yaml
+ansible-playbook lvm-conf.yaml -vvv
