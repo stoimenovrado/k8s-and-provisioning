@@ -33,10 +33,10 @@
         var: parted_info_sdc
         verbosity: 1
 
-    - name: Make sure the machine is stopped / started on volume resize
-      fail:
-        msg: "Reported size of disk in machine differs from in inventory. Do you need to shutdown / start the machine? A reboot is not enough!"
-      when: parted_info_sdc.disk.size | int != lvm_disk_size | int
+    # - name: Make sure the machine is stopped / started on volume resize
+    #   fail:
+    #     msg: "Reported size of disk in machine differs from in inventory. Do you need to shutdown / start the machine? A reboot is not enough!"
+    #   when: parted_info_sdc.disk.size | int != parasoft_dtp_volume_size | int
 
     - name: Make sure we don't destroy data accidentally
       fail:
