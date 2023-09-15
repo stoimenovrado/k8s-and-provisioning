@@ -1,3 +1,4 @@
+---
 - hosts: localhost
   vars:
     parasoft_dtp_backup_directory: /mnt/backup
